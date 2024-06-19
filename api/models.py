@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-# Create your models here.
 
 # User Manager
 class UserManager(BaseUserManager):
@@ -35,8 +34,8 @@ class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=256)
     role = models.CharField(max_length=50, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     objects = UserManager()
 
@@ -61,13 +60,10 @@ class UserSkills(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     topic = models.CharField(max_length=100)
     level = models.CharField(max_length=100)
-    speaking = models.IntegerField(default=0)
-    listening = models.IntegerField(default=0)
-    vocabulary = models.IntegerField(default=0)
-    reading = models.IntegerField(default=0)
-
-    class Meta:
-        unique_together = ('user', 'topic', 'level')
+    speaking = models.IntegerField(default=0, blank=True, null=True)
+    listening = models.IntegerField(default=0, blank=True, null=True)
+    vocabulary = models.IntegerField(default=0, blank=True, null=True)
+    reading = models.IntegerField(default=0, blank=True, null=True)
 
 # Topic Model
 class Topic(models.Model):
@@ -91,19 +87,11 @@ class Level(models.Model):
 
 # Question Model
 class Question(models.Model):
-    QUESTION_TYPES = [
-        ('speaking', 'Speaking'),
-        ('listening', 'Listening'),
-        ('vocabulary', 'Vocabulary'),
-        ('reading', 'Reading'),
-    ]
-
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
-    type = models.CharField(max_length=20, choices=QUESTION_TYPES)
+    type = models.CharField(max_length=50)
     question = models.TextField()
     image = models.ImageField(upload_to='questions/', blank=True, null=True)
-    options = models.JSONField(blank=True, null=True)
+    options = models.TextField(blank=True, null=True)
     answer = models.IntegerField()
 
     def __str__(self):
@@ -112,9 +100,9 @@ class Question(models.Model):
 # WeeklyChallenge Model
 class WeeklyChallenge(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
-    description = models.TextField()
-    start_date = models.DateTimeField(auto_now_add=True)
-    end_date = models.DateTimeField()
+    description = models.TextField(blank=True, null=True)
+    start_date = models.DateTimeField(blank=True, null=True, default=0)
+    end_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.description
@@ -124,7 +112,55 @@ class Score(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     challenge = models.ForeignKey(WeeklyChallenge, on_delete=models.CASCADE)
     score = models.IntegerField()
-    status = models.CharField(max_length=20, default='pendiente')
+    status = models.CharField(max_length=50, blank=True, null=True, default='pendente')
 
     def __str__(self):
         return f'{self.user.username} - {self.score}'
+
+# PontuationUserLevel Model
+class PontuationUserLevel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    level = models.ForeignKey(Level, on_delete=models.CASCADE)
+    pontuation = models.IntegerField()
+
+    class Meta:
+        unique_together = ('user', 'level')
+
+# UserTopicInterest Model
+class UserTopicInterest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'topic')
+
+# Comunidade Model
+class Comunidade(models.Model):
+    community_id = models.AutoField(primary_key=True)
+    community_topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    description = models.TextField(blank=True, null=True)
+    fecha_creacion = models.IntegerField()
+    numero_miembros = models.IntegerField()
+
+    def __str__(self):
+        return str(self.community_id)
+
+# UserComunity Model
+class UserComunity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    community = models.ForeignKey(Comunidade, on_delete=models.CASCADE)
+    fecha_entrada = models.IntegerField()
+
+    class Meta:
+        unique_together = ('user', 'community')
+
+# UserProfile Model
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    streak = models.IntegerField()
+    objetivo = models.IntegerField()
+    idioma_estudiado = models.IntegerField()
+    profile_pic = models.CharField(max_length=255)
+
+    def __str__(self):
+        return str(self.user)
