@@ -67,7 +67,7 @@ class AudioJsonSerializer(serializers.Serializer):
     sample_width = serializers.IntegerField()
     audio_bytes = serializers.CharField()
         
-class PuntuationUserLevelSerializer(serializers.ModelSerializer):
+class PontuationUserLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = PontuationUserLevel
         fields = '__all__'
