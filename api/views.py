@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score
-from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer
+from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score, UserProfile
+from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer, UserProfileSerializer
 import base64
 from pydub import AudioSegment
 from rest_framework import status
@@ -62,3 +62,24 @@ class AudioUploadView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+def GetUserProfile(request):
+
+    user = request.user
+    try:
+        # Obter o perfil do usuário
+        user_profile = UserProfile.objects.get(user=user)
+        user_info = User.objects.get(user=user)
+
+        user_data = {
+            'name': user_info.full_name,
+            'username': user_info.username,
+            'nacionalidade': user_profile.idioma_estudiado,
+            'streak': user_profile.streak,
+            'goal': user_profile.objetivo,
+            'image_profile': user_profile.profile_pic,
+            'progress': user_profile.progress
+        }
+        return Response(user_data, status=status.HTTP_202_ACCEPTED)
+    except UserProfile.DoesNotExist:
+        return Response({'error': 'User profile not found'}, status=404)
