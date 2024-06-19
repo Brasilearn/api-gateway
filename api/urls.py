@@ -17,4 +17,15 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('upload-audio/', AudioUploadView.as_view(), name='upload_audio')
+
+    # Nuevas rutas GET
+    path('questions/<int:id_level>/<str:q_type>/', get_questions, name='get_questions'),
+    path('level/<int:id_topic>/', get_levels, name='get_levels'),
+    path('weeklyChallenge/<int:id_topic>/<str:start_date>/<str:end_date>/', get_weekly_challenge, name='get_weekly_challenge'),
+    path('user/<int:id_user>/<int:id_challenge>/', get_user_score, name='get_user_score'),
+    path('puntuacion/<int:user_id>/<int:id_topic>/<int:id_level>/', get_user_pontuation, name='get_user_pontuation'),
+
+    # Nuevas rutas POST
+    path('pathLLM-chatbot/', pathLLM_chatbot, name='pathLLM_chatbot'),
+    path('load_pontuation/', load_pontuation, name='load_pontuation'),
 ]
