@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets , generics
 from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score, UserProfile,PontuationUserLevel,Comunidade,UserComunity,UserTopicInterest
-from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer,PontuationUserLevelSerializer,ComunidadeSerializer,UserComunitySerializer,UserTopicInterestSerializer
+from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer,ComunidadeSerializer,UserComunitySerializer,UserTopicInterestSerializer, PontuationUserLevelSerializer
 import base64
 from pydub import AudioSegment
 from rest_framework import status
@@ -111,6 +111,11 @@ def get_user_profile(request):
         return Response({'error': 'User profile not found'}, status=404)
 
 
+
+@api_view(['GET'])
+def return_id(request):
+    user_id = request.user.id
+    return Response(user_id)
 # Vista para obtener preguntas por nivel y tipo
 @api_view(['GET'])
 def get_questions(request, id_level, q_type):
@@ -143,7 +148,7 @@ def get_user_score(request, id_user, id_challenge):
 @api_view(['GET'])
 def get_user_pontuation(request, user_id, id_topic, id_level):
     pontuation = PontuationUserLevel.objects.filter(user=user_id, level__topic=id_topic, level=id_level).first()
-    serializer = PuntuationUserLevelSerializer(pontuation)
+    serializer = PontuationUserLevel(pontuation)
     return Response(serializer.data)
 
 # Vista para actualizar puntuación

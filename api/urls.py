@@ -5,8 +5,8 @@ from api import views
 from rest_framework.authtoken.views import obtain_auth_token
 from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, get_user_profile
 
-from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView, UserProfileViewSet,ComunidadeViewSet,PontuationUserLevelViewSet,UserTopicInterestViewSet
-from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot
+from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView,ComunidadeViewSet,PontuationUserLevelViewSet,UserTopicInterestViewSet
+from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, return_id
 from .views import UserComunityViewSet
 
 
@@ -44,6 +44,7 @@ urlpatterns = [
     path('load_pontuation/', load_pontuation, name='load_pontuation'),
 
     
-    path("GetUserProfile/",get_user_profile, name="get_user_profile" )
+    path("GetUserProfile/",get_user_profile, name="get_user_profile" ),
+    path("ReturnID/",return_id,name="return_id" )
 
 ]
