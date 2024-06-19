@@ -31,6 +31,7 @@ class UserManager(BaseUserManager):
 # User Model
 class User(AbstractBaseUser):
     username = models.CharField(max_length=100, unique=True)
+    full_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=256)
     role = models.CharField(max_length=50, blank=True, null=True)
@@ -160,6 +161,7 @@ class UserProfile(models.Model):
     streak = models.IntegerField()
     objetivo = models.IntegerField()
     idioma_estudiado = models.IntegerField()
+    progress = models.IntegerField()
     profile_pic = models.CharField(max_length=255)
 
     def __str__(self):
