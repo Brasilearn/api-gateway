@@ -1,7 +1,13 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score
-from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer
+from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer
+import base64
+from pydub import AudioSegment
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from google.cloud import speech_v1p1beta1 as speech
 
 # Create your views here.
 class UserViewSet(viewsets.ModelViewSet):
@@ -31,3 +37,27 @@ class WeeklyChallengeViewSet(viewsets.ModelViewSet):
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
+
+class AudioUploadView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = AudioJsonSerializer(data=request.data)
+        if serializer.is_valid():
+            audio_data = serializer.validated_data
+            audio_bytes = base64.b64decode(audio_data['audio_bytes'])
+            
+            client = speech.SpeechClient()
+            audio = speech.RecognitionAudio(content=audio_bytes)
+            config = speech.RecognitionConfig(
+                encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+                sample_rate_hertz=audio_data['frame_rate'],
+                language_code='pt-BR',
+            )
+            response = client.recognize(config=config, audio=audio)
+            
+            transcript = ""
+            for result in response.results:
+                transcript += result.alternatives[0].transcript + " "
+            
+            return Response({"transcript": transcript.strip()}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

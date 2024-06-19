@@ -9,9 +9,15 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Constrói o caminho relativo para o arquivo JSON
+GOOGLE_APPLICATION_CREDENTIALS_PATH = os.path.join(BASE_DIR, 'graphical-radio-426900-h3-7e7c6c749a2f.json')
+
+# Configura a variável de ambiente para as credenciais do Google Cloud
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GOOGLE_APPLICATION_CREDENTIALS_PATH
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
