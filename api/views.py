@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score
-<<<<<<< HEAD
 from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer
 import base64
 from pydub import AudioSegment
@@ -9,9 +8,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from google.cloud import speech_v1p1beta1 as speech
-=======
-from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer
->>>>>>> aaf6ea492d02fa19975f9e891b1d81ba6d10e585
 
 # Create your views here.
 class UserViewSet(viewsets.ModelViewSet):
@@ -40,7 +36,6 @@ class WeeklyChallengeViewSet(viewsets.ModelViewSet):
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.all()
-<<<<<<< HEAD
     serializer_class = ScoreSerializer
 
 class AudioUploadView(APIView):
@@ -66,6 +61,4 @@ class AudioUploadView(APIView):
             return Response({"transcript": transcript.strip()}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-=======
-    serializer_class = ScoreSerializer
->>>>>>> aaf6ea492d02fa19975f9e891b1d81ba6d10e585
+    
