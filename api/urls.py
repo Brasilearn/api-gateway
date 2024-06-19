@@ -1,9 +1,14 @@
 from django.urls import path, include
 from rest_framework import routers
 from api import views
-from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView
+
 from rest_framework.authtoken.views import obtain_auth_token
 from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, get_user_profile
+
+from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView, UserProfileViewSet,ComunidadeViewSet,PontuationUserLevelViewSet,UserTopicInterestViewSet
+from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot
+from .views import UserComunityViewSet
+
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -13,7 +18,13 @@ router.register(r'levels', LevelViewSet)
 router.register(r'questions', QuestionViewSet)
 router.register(r'weekly-challenges', WeeklyChallengeViewSet)
 router.register(r'scores', ScoreViewSet)
-#router.register(r"GetUserProfile", UserProfileViewSet, basename='userprofile')
+
+router.register(r'comunidade', ComunidadeViewSet)
+router.register(r'pontuation', PontuationUserLevelViewSet)
+router.register(r'userTopicInterest' ,UserTopicInterestViewSet)
+router.register(r'userComunity', UserComunityViewSet)
+
+
 
 urlpatterns = [
     path('', include(router.urls)),

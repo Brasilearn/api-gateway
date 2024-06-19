@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets , generics
-from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score, UserProfile,PontuationUserLevel,Comunidade,UserComunity
-from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer,PuntuationUserLevelSerializer,ComunidadeSerializer,UserComunitySerializer
+from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score, UserProfile,PontuationUserLevel,Comunidade,UserComunity,UserTopicInterest
+from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer,PontuationUserLevelSerializer,ComunidadeSerializer,UserComunitySerializer,UserTopicInterestSerializer
 import base64
 from pydub import AudioSegment
 from rest_framework import status
@@ -44,6 +44,13 @@ class WeeklyChallengeViewSet(viewsets.ModelViewSet):
     queryset = WeeklyChallenge.objects.all()
     serializer_class = WeeklyChallengeSerializer
 
+class PontuationUserLevelViewSet(viewsets.ModelViewSet):
+    queryset = PontuationUserLevel.objects.all()
+    serializer_class = PontuationUserLevelSerializer
+
+class UserTopicInterestViewSet(viewsets.ModelViewSet):
+    queryset = UserTopicInterest.objects.all()
+    serializer_class = UserTopicInterestSerializer
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.all()
@@ -82,6 +89,7 @@ class AudioUploadView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+
 @api_view(['GET']) 
 def get_user_profile(request):
     user = request.user
@@ -101,6 +109,7 @@ def get_user_profile(request):
         return Response(user_data, status=status.HTTP_202_ACCEPTED)
     except UserProfile.DoesNotExist:
         return Response({'error': 'User profile not found'}, status=404)
+
 
 # Vista para obtener preguntas por nivel y tipo
 @api_view(['GET'])
