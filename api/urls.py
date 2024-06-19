@@ -1,11 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 from api import views
-<<<<<<< HEAD
 from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView
-=======
-from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet
->>>>>>> aaf6ea492d02fa19975f9e891b1d81ba6d10e585
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)

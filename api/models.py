@@ -127,8 +127,4 @@ class Score(models.Model):
     status = models.CharField(max_length=20, default='pendiente')
 
     def __str__(self):
-<<<<<<< HEAD
         return f'{self.user.username} - {self.score}'
-=======
-        return f'{self.user.username} - {self.score}'
->>>>>>> aaf6ea492d02fa19975f9e891b1d81ba6d10e585
