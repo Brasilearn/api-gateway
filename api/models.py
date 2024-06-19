@@ -160,6 +160,7 @@ class UserProfile(models.Model):
     streak = models.IntegerField()
     objetivo = models.IntegerField()
     idioma_estudiado = models.IntegerField()
+    profile_pic = models.CharField(max_length=255)
 
     def __str__(self):
         return str(self.user)
