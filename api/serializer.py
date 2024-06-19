@@ -58,3 +58,11 @@ class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score
         fields = ['id', 'user', 'challenge', 'score', 'status']
+
+class AudioJsonSerializer(serializers.Serializer):
+    duration_seconds = serializers.FloatField()
+    frame_rate = serializers.IntegerField()
+    channels = serializers.IntegerField()
+    sample_width = serializers.IntegerField()
+    audio_bytes = serializers.CharField()
+        

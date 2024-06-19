@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 from api import views
-from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet
+from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -15,5 +15,6 @@ router.register(r'scores', ScoreViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('upload-audio/', AudioUploadView.as_view(), name='upload_audio')
 ]
