@@ -182,3 +182,12 @@ def pathLLM_chatbot(request):
     response = "Respuesta del chatbot a: " + prompt
     return Response({'response': response})
 
+
+@api_view(['GET'])
+def return_topic(request, topic_slug):
+    try:
+        topic = Topic.objects.get(slug=topic_slug)
+        serializer = TopicSerializer(topic)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Topic.DoesNotExist:
+        return Response({'error': 'Topic not found'}, status=status.HTTP_404_NOT_FOUND)
