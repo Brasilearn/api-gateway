@@ -1,17 +1,25 @@
 from django.shortcuts import render
 from rest_framework import viewsets , generics
 from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score, UserProfile,PontuationUserLevel,Comunidade,UserComunity,UserTopicInterest
-from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer,PontuationUserLevelSerializer,ComunidadeSerializer,UserComunitySerializer,UserTopicInterestSerializer
+from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer,ComunidadeSerializer,UserComunitySerializer,UserTopicInterestSerializer, PontuationUserLevelSerializer
 import base64
 from pydub import AudioSegment
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from google.cloud import speech_v1p1beta1 as speech
-from rest_framework.decorators import api_view
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
+@api_view(["POST"])
+def logout_user(request):
+    if request.method == "POST":
+        request.user.auth_token.delete()
+        return Response({"Message": "You are logget out"}, status = status.HTTP_200) 
+
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -81,27 +89,33 @@ class AudioUploadView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class UserProfileViewSet(viewsets.ViewSet): 
-    @action(detail=False, methods=['get'])
-    def get_user_profile(self, request):
-        user = request.user
-        try:
-            user_profile = UserProfile.objects.get(user=user)
-            user_info = User.objects.get(id=user.id)
- 
-            user_data = {
-                'name': user_info.full_name,
-                'username': user_info.username,
-                'nacionalidade': user_profile.idioma_estudiado,
-                'streak': user_profile.streak,
-                'goal': user_profile.objetivo,
-                'image_profile': user_profile.profile_pic,  # Se profile_pic for uma ImageField, adicione .url
-                'progress': user_profile.progress
-            }
-            return Response(user_data, status=status.HTTP_202_ACCEPTED)
-        except UserProfile.DoesNotExist:
-            return Response({'error': 'User profile not found'}, status=404)
 
+@api_view(['GET']) 
+def get_user_profile(request):
+    user = request.user
+    try:
+        user_profile = UserProfile.objects.get(user=user)
+        user_info = User.objects.get(id=user.id)
+
+        user_data = {
+            'name': user_info.full_name,
+            'username': user_info.username,
+            'nacionalidade': user_profile.idioma_estudiado,
+            'streak': user_profile.streak,
+            'goal': user_profile.objetivo,
+            'image_profile': user_profile.profile_pic,  # Se profile_pic for uma ImageField, adicione .url
+            'progress': user_profile.progress
+        }
+        return Response(user_data, status=status.HTTP_202_ACCEPTED)
+    except UserProfile.DoesNotExist:
+        return Response({'error': 'User profile not found'}, status=404)
+
+
+
+@api_view(['GET'])
+def return_id(request):
+    user_id = request.user.id
+    return Response(user_id)
 # Vista para obtener preguntas por nivel y tipo
 @api_view(['GET'])
 def get_questions(request, id_level, q_type):
@@ -134,7 +148,7 @@ def get_user_score(request, id_user, id_challenge):
 @api_view(['GET'])
 def get_user_pontuation(request, user_id, id_topic, id_level):
     pontuation = PontuationUserLevel.objects.filter(user=user_id, level__topic=id_topic, level=id_level).first()
-    serializer = PuntuationUserLevelSerializer(pontuation)
+    serializer = PontuationUserLevel(pontuation)
     return Response(serializer.data)
 
 # Vista para actualizar puntuación
@@ -167,3 +181,4 @@ def pathLLM_chatbot(request):
     # Implementa la lógica de respuesta del chatbot aquí
     response = "Respuesta del chatbot a: " + prompt
     return Response({'response': response})
+
