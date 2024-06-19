@@ -8,9 +8,17 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from google.cloud import speech_v1p1beta1 as speech
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 
 # Create your views here.
+@api_view(["POST"])
+def logout_user(request):
+    if request.method == "POST":
+        request.user.auth_token.delete()
+        return Response({"Message": "You are logget out"}, status = status.HTTP_200) 
+
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -85,3 +93,4 @@ class UserProfileViewSet(viewsets.ViewSet):
             return Response(user_data, status=status.HTTP_202_ACCEPTED)
         except UserProfile.DoesNotExist:
             return Response({'error': 'User profile not found'}, status=404)
+        
