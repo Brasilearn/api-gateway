@@ -1,16 +1,20 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import User, UserSkills, Topic, Level, Question, WeeklyChallenge, Score, UserProfile
-from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer, UserProfileSerializer
+from .serializer import UserSerializer, UserSkillsSerializer, TopicSerializer, LevelSerializer, QuestionSerializer, WeeklyChallengeSerializer, ScoreSerializer, AudioJsonSerializer
 import base64
 from pydub import AudioSegment
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from google.cloud import speech_v1p1beta1 as speech
+<<<<<<< HEAD
 from rest_framework.decorators import api_view
 
 
+=======
+from rest_framework.decorators import action
+>>>>>>> ebf4156d31144d110b0316dae6e4374155281d04
 
 # Create your views here.
 class UserViewSet(viewsets.ModelViewSet):
@@ -66,23 +70,24 @@ class AudioUploadView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-def GetUserProfile(request):
-
-    user = request.user
-    try:
-        # Obter o perfil do usuário
-        user_profile = UserProfile.objects.get(user=user)
-        user_info = User.objects.get(user=user)
-
-        user_data = {
-            'name': user_info.full_name,
-            'username': user_info.username,
-            'nacionalidade': user_profile.idioma_estudiado,
-            'streak': user_profile.streak,
-            'goal': user_profile.objetivo,
-            'image_profile': user_profile.profile_pic,
-            'progress': user_profile.progress
-        }
-        return Response(user_data, status=status.HTTP_202_ACCEPTED)
-    except UserProfile.DoesNotExist:
-        return Response({'error': 'User profile not found'}, status=404)
+class UserProfileViewSet(viewsets.ViewSet):
+ 
+    @action(detail=False, methods=['get'])
+    def get_user_profile(self, request):
+        user = request.user
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+            user_info = User.objects.get(id=user.id)
+ 
+            user_data = {
+                'name': user_info.full_name,
+                'username': user_info.username,
+                'nacionalidade': user_profile.idioma_estudiado,
+                'streak': user_profile.streak,
+                'goal': user_profile.objetivo,
+                'image_profile': user_profile.profile_pic,  # Se profile_pic for uma ImageField, adicione .url
+                'progress': user_profile.progress
+            }
+            return Response(user_data, status=status.HTTP_202_ACCEPTED)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'User profile not found'}, status=404)

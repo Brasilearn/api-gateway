@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 from api import views
-from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView, GetUserProfile
+from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView, UserProfileViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -11,8 +11,7 @@ router.register(r'levels', LevelViewSet)
 router.register(r'questions', QuestionViewSet)
 router.register(r'weekly-challenges', WeeklyChallengeViewSet)
 router.register(r'scores', ScoreViewSet)
-router.register(r"GetUserProfile", GetUserProfile)
-
+router.register(r"GetUserProfile", UserProfileViewSet, basename='userprofile')
 
 urlpatterns = [
     path('', include(router.urls)),

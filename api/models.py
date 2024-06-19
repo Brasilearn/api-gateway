@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+
 # User Manager
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
@@ -31,7 +32,7 @@ class UserManager(BaseUserManager):
 # User Model
 class User(AbstractBaseUser):
     username = models.CharField(max_length=100, unique=True)
-    full_name = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=100, null = True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=256)
     role = models.CharField(max_length=50, blank=True, null=True)
@@ -166,3 +167,4 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return str(self.user)
+    
