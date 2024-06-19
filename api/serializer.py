@@ -6,8 +6,9 @@ from .models import Level
 from .models import Question
 from .models import WeeklyChallenge
 from .models import Score
+from .models import PontuationUserLevel
+from .models import Comunidade, UserComunity, UserProfile ,UserTopicInterest
 
-     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -66,3 +67,27 @@ class AudioJsonSerializer(serializers.Serializer):
     sample_width = serializers.IntegerField()
     audio_bytes = serializers.CharField()
         
+class PuntuationUserLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PontuationUserLevel
+        fields = '__all__'
+
+class UserTopicInterestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTopicInterest
+        fields = '__all__'
+
+class ComunidadeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comunidade
+        fields = '__all__'
+
+class UserComunitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserComunity
+        fields = '__all__'
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
