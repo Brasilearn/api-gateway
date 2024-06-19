@@ -47,6 +47,6 @@ urlpatterns = [
     path("GetUserProfile/",get_user_profile, name="get_user_profile" ),
     path("ReturnID/",return_id,name="return_id" ),
 
-    path('return_topic/<str:topic_name>/', return_topic, name='return_topic'),
+    path('return_topic/<str:topic_slug>/', return_topic, name='return_topic'),
 
 ]
