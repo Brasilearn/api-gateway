@@ -31,8 +31,10 @@ SECRET_KEY = "django-insecure-qk7^#paamt96)%+*8d)wwo$&e1x0d8^7!qy)xo5o5gcc&53$f^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+APP_NAME = os.environ.get("brasilearn-api-gateway")
+ALLOWED_HOSTS = [f"{APP_NAME}.fly.dev"]
 
+# ALLOWED_HOSTS = []
 
 # Application definition
 
