@@ -57,6 +57,7 @@ class WeeklyChallengeSerializer(serializers.ModelSerializer):
 class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score
+<<<<<<< HEAD
         fields = ['id', 'user', 'challenge', 'score', 'status']
 
 class AudioJsonSerializer(serializers.Serializer):
@@ -65,3 +66,6 @@ class AudioJsonSerializer(serializers.Serializer):
     channels = serializers.IntegerField()
     sample_width = serializers.IntegerField()
     audio_bytes = serializers.CharField()
+=======
+        fields = ['id', 'user', 'challenge', 'score', 'status']
+>>>>>>> aaf6ea492d02fa19975f9e891b1d81ba6d10e585
