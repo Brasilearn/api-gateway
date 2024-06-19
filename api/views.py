@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from google.cloud import speech_v1p1beta1 as speech
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
@@ -82,27 +82,25 @@ class AudioUploadView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class UserProfileViewSet(viewsets.ViewSet):
- 
-    @action(detail=False, methods=['get'])
-    def get_user_profile(self, request):
-        user = request.user
-        try:
-            user_profile = UserProfile.objects.get(user=user)
-            user_info = User.objects.get(id=user.id)
- 
-            user_data = {
-                'name': user_info.full_name,
-                'username': user_info.username,
-                'nacionalidade': user_profile.idioma_estudiado,
-                'streak': user_profile.streak,
-                'goal': user_profile.objetivo,
-                'image_profile': user_profile.profile_pic,  # Se profile_pic for uma ImageField, adicione .url
-                'progress': user_profile.progress
-            }
-            return Response(user_data, status=status.HTTP_202_ACCEPTED)
-        except UserProfile.DoesNotExist:
-            return Response({'error': 'User profile not found'}, status=404)
+@api_view(['GET']) 
+def get_user_profile(request):
+    user = request.user
+    try:
+        user_profile = UserProfile.objects.get(user=user)
+        user_info = User.objects.get(id=user.id)
+
+        user_data = {
+            'name': user_info.full_name,
+            'username': user_info.username,
+            'nacionalidade': user_profile.idioma_estudiado,
+            'streak': user_profile.streak,
+            'goal': user_profile.objetivo,
+            'image_profile': user_profile.profile_pic,  # Se profile_pic for uma ImageField, adicione .url
+            'progress': user_profile.progress
+        }
+        return Response(user_data, status=status.HTTP_202_ACCEPTED)
+    except UserProfile.DoesNotExist:
+        return Response({'error': 'User profile not found'}, status=404)
 
 # Vista para obtener preguntas por nivel y tipo
 @api_view(['GET'])
@@ -170,10 +168,3 @@ def pathLLM_chatbot(request):
     response = "Respuesta del chatbot a: " + prompt
     return Response({'response': response})
 
-
-@api_view(['GET'])
-def test_nombre(request):
-    permission_classes = [IsAuthenticated]
-    user = request.user
-    resp = user.username
-    return Response({'response': resp})

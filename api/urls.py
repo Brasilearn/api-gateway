@@ -1,9 +1,9 @@
 from django.urls import path, include
 from rest_framework import routers
 from api import views
-from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView, UserProfileViewSet
+from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, test_nombre
+from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, get_user_profile
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -13,7 +13,7 @@ router.register(r'levels', LevelViewSet)
 router.register(r'questions', QuestionViewSet)
 router.register(r'weekly-challenges', WeeklyChallengeViewSet)
 router.register(r'scores', ScoreViewSet)
-router.register(r"GetUserProfile", UserProfileViewSet, basename='userprofile')
+#router.register(r"GetUserProfile", UserProfileViewSet, basename='userprofile')
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('pathLLM-chatbot/', pathLLM_chatbot, name='pathLLM_chatbot'),
     path('load_pontuation/', load_pontuation, name='load_pontuation'),
 
-    path("/test_nombre", test_nombre)
+    
+    path("GetUserProfile/",get_user_profile, name="get_user_profile" )
 
 ]
