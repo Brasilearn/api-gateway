@@ -16,6 +16,8 @@ import openai
 from django.conf import settings
 from django.http import JsonResponse
 from groq import Groq
+from django.core.files.storage import default_storage
+from difflib import SequenceMatcher
 import os
 
 # Configurar el cliente de OpenAI
@@ -309,6 +311,46 @@ def add_personality_options(personality, contexto):
             })   
         
     # Agregar más opciones según sea necesario
+
+def transcribe_audio(filename):    
+
+    with open(filename, "rb") as file:
+        transcription = groq_client.audio.transcriptions.create(
+            file=(filename, file.read()),
+            model="whisper-large-v3",
+            prompt="",  # Opcional
+            response_format="json",  # Opcional
+            language="pt",  # Cambiar a portugués
+            temperature=0.0  # Opcional
+        )
+        return transcription.text
+
+def compare_transcription(transcription, reference_text):
+    matcher = SequenceMatcher(None, transcription, reference_text)
+    score = matcher.ratio()  # Obtener la similitud entre los dos textos
+    return score
+
+@api_view(['POST'])
+def evaluate_pronunciation(request):
+    if 'file' not in request.FILES or 'reference_text' not in request.data:
+        return JsonResponse({'error': 'Audio file or reference text not provided'}, status=400)
+
+    file = request.FILES['file']
+    reference_text = request.data['reference_text']
+    file_path = default_storage.save(file.name, file)
+    file_full_path = os.path.join(default_storage.location, file_path)
+
+    try:
+        transcription = transcribe_audio(file_full_path)
+        score = compare_transcription(transcription, reference_text)
+
+        return JsonResponse({'transcription': transcription, 'score': score})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    finally:
+        if os.path.exists(file_full_path):
+            os.remove(file_full_path)
+
 
 
 @api_view(['GET'])
