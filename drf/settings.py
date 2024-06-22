@@ -11,6 +11,15 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+import openai
+
+load_dotenv()
+
+API_KEY_OPENAI = os.getenv("API_KEY_OPENAI")
+
+API_KEY_GROQ = os.environ.get("API_KEY_GROQ")
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Constrói o caminho relativo para o arquivo JSON
@@ -92,7 +101,7 @@ DATABASES = {'default':
              {'ENGINE': 'django.db.backends.mysql',
               'NAME': 'jhanerco_brasilearn',
               'USER': 'jhanerco_ihc',
-              'PASSWORD': 'gRmuHlJvdPvhFnXM',
+              'PASSWORD': os.getenv("PASSWORD"),
               'HOST': '162.246.16.66',
               'PORT': '3306',}
              }

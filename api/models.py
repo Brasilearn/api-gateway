@@ -167,4 +167,11 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+class UserContext(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    context_data = models.JSONField(default=None, null=True)
+
+    def __str__(self):
+        return self.user.email
     

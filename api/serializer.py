@@ -8,6 +8,7 @@ from .models import WeeklyChallenge
 from .models import Score
 from .models import PontuationUserLevel
 from .models import Comunidade, UserComunity, UserProfile ,UserTopicInterest
+from .models import UserContext
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -90,4 +91,9 @@ class UserComunitySerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
+        fields = '__all__'
+
+class UserContextSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserContext
         fields = '__all__'
