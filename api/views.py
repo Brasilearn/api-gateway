@@ -270,8 +270,8 @@ def obtener_completion( contexto , provider = 'groq', model = 'llama3-8b-8192'):
 
 def add_personality_options(personality, contexto):
     # Agregar opciones de comportamiento según la personalidad al contexto
-    default = '''Eres un ChatBot amigable. Responde a las preguntas de los usuarios sobre el idioma portugues o viceversa. /        
-        Por defecto eres un profesor que habla español nativo.    
+    default = '''Eres un ChatBot amigable. Responde a las preguntas de los usuarios sobre el idioma portugues o viceversa.        
+    Por defecto eres un profesor que habla español nativo.    
     '''
 
     if personality == 'Profesional':
