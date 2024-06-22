@@ -15,8 +15,17 @@ from rest_framework.permissions import IsAuthenticated
 import openai
 from django.conf import settings
 from django.http import JsonResponse
+from groq import Groq
+import os
 
+# Configurar el cliente de OpenAI
 openai.api_key = settings.API_KEY_OPENAI
+
+# Configurar el cliente de GROQ
+groq_client = Groq(
+    api_key=settings.API_KEY_GROQ,
+)
+
 
 # Create your views here.
 @api_view(["POST"])
@@ -187,11 +196,11 @@ def load_pontuation(request):
 # Vista para chatbot
 @api_view(['POST'])
 def pathLLM_chatbot(request):
-    print(request.body)
+    
     user_id = request.data.get('user_id')
     prompt = request.data.get('prompt')
-    personalidad = request.data.get('personalidad')
-    print(user_id)
+    personalidad = request.data.get('personalidad') 
+    provider = request.data.get('provider')
     
 
     # Verificar si el usuario existe en la base de datos
@@ -209,39 +218,76 @@ def pathLLM_chatbot(request):
     # Verificar si el contexto está vacío y agregar opciones de comportamiento según la personalidad
     if not contexto:
         # Inicializamos el contexto
-        contexto = []
-        add_personality_options(personalidad, contexto)
+        contexto = [{
+            "data": [],
+            "personalidad": personalidad,
+        }]
+        add_personality_options(personalidad, contexto[0]['data'])
+    
+    # Verificar si se ha cambiado de personalidad
+    if personalidad != contexto[0]['personalidad']:
+        # Eliminamos el primer elemento del contexto
+        contexto[0]['data'].pop(0)
+        
+        add_personality_options(personalidad, contexto[0]['data'])
+        contexto[0]['personalidad'] = personalidad
 
     # Agregar el mensaje del usuario al contexto
-    contexto.append({"role": "user", "content": prompt})
+    contexto[0]['data'].append({"role": "user", "content": prompt})
 
     # Implementar la lógica de respuesta del chatbot
-    respuesta = obtener_completion(contexto)
+    respuesta = obtener_completion(contexto[0]['data'],provider)
+
+    contexto[0]['data'].append({"role": "assistant", "content": respuesta})
 
     # Actualizar el contexto del usuario
-    user_context.context_data = contexto + [{"role": "assistant", "content": respuesta}]
+    user_context.context_data = contexto
     user_context.save()
 
     return JsonResponse({'response': respuesta})
 
 
-def obtener_completion( contexto , model = 'gpt-3.5-turbo'):
-    mensaje = openai.chat.completions.create(
-        model = model,
-        messages = contexto,
-        max_tokens = 100,
-        temperature = 0,
-    )
-    return mensaje.choices[0].message.content
+def obtener_completion( contexto , provider = 'groq', model = 'llama3-8b-8192'):
+
+    if provider == 'openai':
+        mensaje = openai.chat.completions.create(
+            model = model,
+            messages = contexto,
+            max_tokens = 100,
+            temperature = 0,
+        )
+        return mensaje.choices[0].message.content
+    elif provider == 'groq':
+        mensaje = groq_client.chat.completions.create(
+            messages=contexto,
+            max_tokens=500,            
+            model=model,
+
+        )
+        return mensaje.choices[0].message.content
+    else:
+        return ValueError(f'El proveedor {provider} no es válido')
 
 def add_personality_options(personality, contexto):
     # Agregar opciones de comportamiento según la personalidad al contexto
-    default = 'Eres un ChatBot amigable. Responde a las preguntas de los usuarios sobre el idioma portugues.'
+    default = '''Eres un ChatBot amigable. Responde a las preguntas de los usuarios sobre el idioma portugues o viceversa. /        
+        Por defecto eres un profesor que habla español nativo.    
+    '''
+
     if personality == 'Profesional':
-        contexto.append({"role": "system", "content": default + 'Habla como un profesional en gramatica del idioma.'})
+        contexto.append({
+            "role": "system", 
+            "content": default + 'Habla como un profesional en gramatica del idioma.'})
         
     elif personality == 'Joven':
-        contexto.append({"role": "system", "content": default + 'Habla como un joven y utiliza un lenguaje informal.'})
+        contexto.append({
+            "role": "system", 
+            "content": default + 'Habla como un joven y utiliza un lenguaje informal.'})
+        
+    elif personality == 'Sarcastico':
+        contexto.append({
+            "role": "system", 
+            "content": 'Eres Marv, un chatbot que responde preguntas de mala gana con respuestas sarcásticas.'})   
         
     # Agregar más opciones según sea necesario
 
