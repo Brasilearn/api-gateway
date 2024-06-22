@@ -7,7 +7,7 @@ from .views import get_questions, get_levels, get_weekly_challenge, get_user_sco
 
 from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView,ComunidadeViewSet,PontuationUserLevelViewSet,UserTopicInterestViewSet
 from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, return_id, return_topic
-from .views import UserComunityViewSet
+from .views import UserComunityViewSet, UserContextViewSet
 
 
 router = routers.DefaultRouter()
@@ -23,6 +23,7 @@ router.register(r'comunidade', ComunidadeViewSet)
 router.register(r'pontuation', PontuationUserLevelViewSet)
 router.register(r'userTopicInterest' ,UserTopicInterestViewSet)
 router.register(r'userComunity', UserComunityViewSet)
+router.register(r'userContext', UserContextViewSet)
 
 
 
