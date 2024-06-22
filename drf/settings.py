@@ -77,6 +77,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://38.25.12.255",
     "https://web-client-cyan-delta.vercel.app",
+    "https://brasilearn.vercel.app",
 ]
 
 CORS_ALLOW_METHODS = [

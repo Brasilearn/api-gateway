@@ -8,7 +8,7 @@ from .views import get_questions, get_levels, get_weekly_challenge, get_user_sco
 from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView,ComunidadeViewSet,PontuationUserLevelViewSet,UserTopicInterestViewSet
 from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, return_id, return_topic
 from .views import UserComunityViewSet, UserContextViewSet
-
+from .views import get_user_context
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -49,5 +49,6 @@ urlpatterns = [
     path("ReturnID/",return_id,name="return_id" ),
 
     path('return_topic/<str:topic_slug>/', return_topic, name='return_topic'),
+    path('userContext/content/<str:user_id>',get_user_context,name = 'get_user_context'),
 
 ]

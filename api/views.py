@@ -193,6 +193,24 @@ def load_pontuation(request):
     
     return Response({'status': 'failed'}, status=400)
 
+# Crearmos un path que te devuelve el contexto
+@api_view(['GET'])
+def get_user_context(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({'error': f'El usuario {user_id} no existe'}, status=400)
+
+    user_context, created = UserContext.objects.get_or_create(user=user)
+
+    if user_context :
+        if user_context.context_data :
+            return JsonResponse({'context': user_context.context_data[0]['data']})
+        else:
+            return JsonResponse({'error': 'El contexto del usuario no contiene la clave "data"'}, status=404)
+    else:
+        return JsonResponse({'error': 'No se ha encontrado el contexto del usuario'}, status=404)
+
 # Vista para chatbot
 @api_view(['POST'])
 def pathLLM_chatbot(request):
@@ -282,12 +300,13 @@ def add_personality_options(personality, contexto):
     elif personality == 'Joven':
         contexto.append({
             "role": "system", 
-            "content": default + 'Habla como un joven y utiliza un lenguaje informal.'})
+            "content": default + 'Habla como un joven divertido y utiliza un lenguaje informal.'})
         
     elif personality == 'Sarcastico':
         contexto.append({
             "role": "system", 
-            "content": 'Eres Marv, un chatbot que responde preguntas de mala gana con respuestas sarcásticas.'})   
+            "content": 'Eres Marv, un chatbot que responde preguntas de mala gana con respuestas sarcásticas. Pero experto en gramatica en portugues.'
+            })   
         
     # Agregar más opciones según sea necesario
 
