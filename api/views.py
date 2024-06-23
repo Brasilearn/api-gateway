@@ -197,7 +197,7 @@ def load_pontuation(request):
 
 # Crearmos un path que te devuelve el contexto
 @api_view(['GET'])
-def get_user_context(request, user_id):
+def get_user_context(request, user_id,chat_id):
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
@@ -207,7 +207,14 @@ def get_user_context(request, user_id):
 
     if user_context :
         if user_context.context_data :
-            return JsonResponse({'context': user_context.context_data[0]['data']})
+            # Buscar el chat_id en el contexto existente
+            chat = next((chat for chat in user_context.context_data if chat['chat_id'] == chat_id), None)
+
+            if chat:
+                return JsonResponse({'context': chat['data']})
+            else:
+                return JsonResponse({'error': 'No se ha encontrado el chat_id en el contexto del usuario'}, status=404)
+            
         else:
             return JsonResponse({'error': 'El contexto del usuario no contiene la clave "data"'}, status=404)
     else:
@@ -216,12 +223,12 @@ def get_user_context(request, user_id):
 # Vista para chatbot
 @api_view(['POST'])
 def pathLLM_chatbot(request):
-    
     user_id = request.data.get('user_id')
     prompt = request.data.get('prompt')
-    personalidad = request.data.get('personalidad') 
+    personalidad = request.data.get('personalidad')
     provider = request.data.get('provider')
-    
+    chat_id = request.data.get('chat_id')
+    model = request.data.get('model')
 
     # Verificar si el usuario existe en la base de datos
     try:
@@ -233,38 +240,50 @@ def pathLLM_chatbot(request):
     user_context, created = UserContext.objects.get_or_create(user=user)
 
     # Obtener el contexto del usuario
-    contexto = user_context.context_data
+    contexto = user_context.context_data or []
 
-    # Verificar si el contexto está vacío y agregar opciones de comportamiento según la personalidad
-    if not contexto:
-        # Inicializamos el contexto
-        contexto = [{
+    # Buscar el chat_id en el contexto existente
+    chat = next((chat for chat in contexto if chat['chat_id'] == chat_id), None)
+
+    if chat:
+        # Si se ha cambiado de personalidad, actualizar el contexto del chat
+        if personalidad != chat['personalidad']:
+            # Buscar y eliminar el elemento que contiene la clave 'system'
+            chat['data'] = [item for item in chat['data'] if item.get('role') != 'system']
+            add_personality_options(personalidad, chat['data'])
+            chat['personalidad'] = personalidad
+    else:
+        # Si no se encuentra el chat_id, agregar un nuevo chat
+        chat = {
+            "chat_id": chat_id,
             "data": [],
             "personalidad": personalidad,
-        }]
-        add_personality_options(personalidad, contexto[0]['data'])
-    
-    # Verificar si se ha cambiado de personalidad
-    if personalidad != contexto[0]['personalidad']:
-        # Eliminamos el primer elemento del contexto
-        contexto[0]['data'].pop(0)
+        }
+        add_personality_options(personalidad, chat['data'])
+        contexto.append(chat)
         
-        add_personality_options(personalidad, contexto[0]['data'])
-        contexto[0]['personalidad'] = personalidad
+    # Agregar la consulta del usuario al contexto
+    chat['data'].append({
+        "role": "user",
+        "content": prompt,
+    })
 
-    # Agregar el mensaje del usuario al contexto
-    contexto[0]['data'].append({"role": "user", "content": prompt})
+    # Obtener el completion
+    menssage = obtener_completion(chat['data'], provider, model)
 
-    # Implementar la lógica de respuesta del chatbot
-    respuesta = obtener_completion(contexto[0]['data'],provider)
+    # Agregar la respuesta del chatbot al contexto
+    chat['data'].append({
+        "role": "assistant",
+        "content": menssage,
+    })
 
-    contexto[0]['data'].append({"role": "assistant", "content": respuesta})
-
-    # Actualizar el contexto del usuario
+    # Guardar el contexto actualizado
     user_context.context_data = contexto
     user_context.save()
 
-    return JsonResponse({'response': respuesta})
+    return JsonResponse({'message': menssage})
+
+
 
 
 def obtener_completion( contexto , provider = 'groq', model = 'llama3-8b-8192'):
@@ -290,24 +309,25 @@ def obtener_completion( contexto , provider = 'groq', model = 'llama3-8b-8192'):
 
 def add_personality_options(personality, contexto):
     # Agregar opciones de comportamiento según la personalidad al contexto
-    default = '''Eres un ChatBot amigable. Responde a las preguntas de los usuarios sobre el idioma portugues o viceversa.        
-    Por defecto eres un profesor que habla español nativo.    
+    default = '''Eres un ChatBot amigable. Responde a las preguntas de los usuarios sobre el idioma portugues . \\
+    Por defecto eres un profesor que habla español nativo peruano y tus alumnos tambien a menos que demuestren lo contrario. \\
+    Conoces mucho del tema y puedes responder a preguntas de gramatica, vocabulario, pronunciacion y cultura.    
     '''
 
     if personality == 'Profesional':
         contexto.append({
             "role": "system", 
-            "content": default + 'Habla como un profesional en gramatica del idioma.'})
+            "content": default + 'Habla como un profesional en gramatica del idioma. Utiliza un lenguaje formal y preciso. Trata de enseñar a los usuarios de la mejor manera posible con frases en español y luego portugues.'})
         
     elif personality == 'Joven':
         contexto.append({
             "role": "system", 
-            "content": default + 'Habla como un joven divertido y utiliza un lenguaje informal.'})
+            "content": default + 'Habla como un joven divertido y utiliza un lenguaje informal. Enseña contando anectodas y experiencias personales. Trata de hacer que los usuarios se sientan comodos y relajados.'})
         
     elif personality == 'Sarcastico':
         contexto.append({
             "role": "system", 
-            "content": 'Eres Marv, un chatbot que responde preguntas de mala gana con respuestas sarcásticas. Pero experto en gramatica en portugues.'
+            "content": 'Has cambiado tu personalidad completamente, ahora expresate diferente. Eres Marv, un chatbot que responde preguntas de mala gana con respuestas sarcásticas. Por defecto eres un profesor de español nativo peruano que enseña portugues, pero siempre reniegas de la vida y bromeas con experiencias malas que viviste.'
             })   
         
     # Agregar más opciones según sea necesario
