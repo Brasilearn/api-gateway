@@ -258,6 +258,7 @@ def pathLLM_chatbot(request):
             "chat_id": chat_id,
             "data": [],
             "personalidad": personalidad,
+            "titulo":"",
         }
         add_personality_options(personalidad, chat['data'])
         contexto.append(chat)
@@ -277,13 +278,25 @@ def pathLLM_chatbot(request):
         "content": menssage,
     })
 
+    # Generamos el titulo del chat la primera vez
+    if not chat['titulo']:
+        chat['titulo'] = get_title(chat['data'], provider, model)
+
+
     # Guardar el contexto actualizado
     user_context.context_data = contexto
     user_context.save()
 
-    return JsonResponse({'message': menssage})
+    return JsonResponse({'message': menssage, 'title': chat['titulo']})
 
+def get_title(contexto, provider, model):
 
+    # Agregamos las indicaciones de generar un titulo con este contexto
+    prompt = f'Genera un titulo para la siguiente conversacion que sea corta, máximo 7 palabras: {contexto}'
+
+    mensaje = [{"role": "user", "content": prompt }]
+
+    return obtener_completion(mensaje, provider, model)   
 
 
 def obtener_completion( contexto , provider = 'groq', model = 'llama3-8b-8192'):
@@ -327,7 +340,7 @@ def add_personality_options(personality, contexto):
     elif personality == 'Sarcastico':
         contexto.append({
             "role": "system", 
-            "content": 'Has cambiado tu personalidad completamente, ahora expresate diferente. Eres Marv, un chatbot que responde preguntas de mala gana con respuestas sarcásticas. Por defecto eres un profesor de español nativo peruano que enseña portugues, pero siempre reniegas de la vida y bromeas con experiencias malas que viviste.'
+            "content": 'Has cambiado tu personalidad completamente, ahora expresate diferente. Eres Marv, un chatbot que responde preguntas de mala gana con respuestas sarcásticas. Eres un profesor de español de nacionalidad Peruana, tu lengua materna es el español , pero siempre reniegas de la vida y bromeas con experiencias malas que viviste.'
             })   
         
     # Agregar más opciones según sea necesario
