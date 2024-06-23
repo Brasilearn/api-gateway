@@ -220,6 +220,25 @@ def get_user_context(request, user_id,chat_id):
     else:
         return JsonResponse({'error': 'No se ha encontrado el contexto del usuario'}, status=404)
 
+# Creamos un path que te devuelve el contexto del usuario por id
+@api_view(['GET'])
+def get_all_chats_user(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({'error': f'El usuario {user_id} no existe'}, status=400)
+
+    user_context, created = UserContext.objects.get_or_create(user=user)
+
+    if user_context :
+        if user_context.context_data :
+            return JsonResponse({'context': user_context.context_data})
+        else:
+            return JsonResponse({'error': 'El contexto del usuario no contiene la clave "data"'}, status=404)
+    else:
+        return JsonResponse({'error': 'No se ha encontrado el contexto del usuario'}, status=404)
+ 
+
 # Vista para chatbot
 @api_view(['POST'])
 def pathLLM_chatbot(request):

@@ -50,6 +50,7 @@ urlpatterns = [
 
     path('return_topic/<str:topic_slug>/', return_topic, name='return_topic'),
     path('userContext/content/<str:user_id>/<str:chat_id>',get_user_context,name = 'get_user_context'),
-    path('evaluate_pronunciation/',evaluate_pronunciation,name='evaluate_pronunciation')
+
+    path('evaluate_pronunciation/',evaluate_pronunciation,name='evaluate_pronunciation'),
 
 ]
