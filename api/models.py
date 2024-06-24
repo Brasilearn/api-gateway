@@ -72,7 +72,8 @@ class Topic(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
+    image = models.ImageField(upload_to='media/images/', blank=True, null=True)
+
 
     def __str__(self):
         return self.title
@@ -82,7 +83,7 @@ class Level(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
+    image = models.ImageField(upload_to='media/images/', blank=True, null=True)
 
     def __str__(self):
         return self.title

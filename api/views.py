@@ -306,7 +306,7 @@ def pathLLM_chatbot(request):
     user_context.context_data = contexto
     user_context.save()
 
-    return JsonResponse({'message': menssage, 'title': chat['titulo']})
+    return JsonResponse({'message': menssage, 'title': chat['titulo']}, status=200)
 
 def get_title(contexto, provider, model):
 
