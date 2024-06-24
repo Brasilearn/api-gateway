@@ -324,7 +324,7 @@ def obtener_completion( contexto , provider = 'groq', model = 'llama3-8b-8192'):
         mensaje = openai.chat.completions.create(
             model = model,
             messages = contexto,
-            max_tokens = 100,
+            max_tokens = 250,
             temperature = 0,
         )
         return mensaje.choices[0].message.content
