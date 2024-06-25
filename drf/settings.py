@@ -43,7 +43,7 @@ SECRET_KEY = "django-insecure-qk7^#paamt96)%+*8d)wwo$&e1x0d8^7!qy)xo5o5gcc&53$f^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["brasilearn-api-gateway.fly.dev", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 # ALLOWED_HOSTS = []
 
@@ -81,7 +81,6 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://38.25.12.255",
-    "https://web-client-cyan-delta.vercel.app",
     "https://brasilearn.vercel.app",
 ]
 
