@@ -98,6 +98,8 @@ CORS_ALLOW_HEADERS = [
     "*",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = "drf.urls"
 
 TEMPLATES = [
