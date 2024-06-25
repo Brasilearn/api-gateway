@@ -82,6 +82,7 @@ class Topic(models.Model):
 class Level(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
+    nivel = models.IntegerField(default=1)
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='media/images/', blank=True, null=True)
 
