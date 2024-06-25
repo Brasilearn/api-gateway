@@ -299,7 +299,7 @@ def pathLLM_chatbot(request):
 
     # Generamos el titulo del chat la primera vez
     if not chat['titulo']:
-        chat['titulo'] = get_title(chat['data'], provider, model)
+        chat['titulo'] = get_title(chat['data'])
 
 
     # Guardar el contexto actualizado
@@ -308,10 +308,13 @@ def pathLLM_chatbot(request):
 
     return JsonResponse({'message': menssage, 'title': chat['titulo']}, status=200)
 
-def get_title(contexto, provider, model):
+def get_title(contexto, provider = 'groq', model = 'llama3-8b-8192'):
 
     # Agregamos las indicaciones de generar un titulo con este contexto
-    prompt = f'Genera un titulo para la siguiente conversacion que sea corta, máximo 7 palabras: {contexto}'
+    prompt = f'''Genera un titulo para la siguiente conversacion que sea corta, máximo 7 palabras:  
+    <requisitos>el titulo debe estar limpio , con solo caracteres alfanumericos </requisitos>
+    <contexto>{contexto}</contexto>
+    '''
 
     mensaje = [{"role": "user", "content": prompt }]
 
