@@ -76,6 +76,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',    
 ]
 
+
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://38.25.12.255",
@@ -93,17 +95,8 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
+    "*",
 ]
-
 
 ROOT_URLCONF = "drf.urls"
 

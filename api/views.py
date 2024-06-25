@@ -427,3 +427,20 @@ def return_topic(request, topic_slug):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Topic.DoesNotExist:
         return Response({'error': 'Topic not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+# /text-to-speech/
+@api_view(['POST'])
+def return_audio(request):
+    text = request.data.get('text')
+    if not text:
+        return Response({'error': 'Text not provided'}, status=status.HTTP_400_BAD_REQUEST)    
+    try:
+        audio = groq_client.text_to_speech.create(
+            text=text,
+            voice="whisper-large-v3",
+            response_format="mp3",
+            language="pt-BR"
+        )
+        return Response({'audio': audio.url}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
