@@ -3,7 +3,7 @@ from rest_framework import routers
 from api import views
 
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, get_user_profile
+from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, get_user_profile, get_user_info
 
 from .views import UserViewSet, UserSkillsViewSet, TopicViewSet, LevelViewSet, QuestionViewSet, WeeklyChallengeViewSet, ScoreViewSet, AudioUploadView,ComunidadeViewSet,PontuationUserLevelViewSet,UserTopicInterestViewSet
 from .views import get_questions, get_levels, get_weekly_challenge, get_user_score, get_user_pontuation, load_pontuation, pathLLM_chatbot, return_id, return_topic
@@ -44,11 +44,13 @@ urlpatterns = [
     path('weeklyChallenge/<int:id_topic>/<str:start_date>/<str:end_date>/', get_weekly_challenge, name='get_weekly_challenge'),
     path('user/<int:id_user>/<int:id_challenge>/', get_user_score, name='get_user_score'),
     path('puntuacion/<int:user_id>/<int:id_topic>/<int:id_level>/', get_user_pontuation, name='get_user_pontuation'),
+    path('user-info/<int:id>/', get_user_info, name='get_user_info'),
 
     # Nuevas rutas POST
     path('pathLLM-chatbot/', pathLLM_chatbot, name='pathLLM_chatbot'),
     path('userContext/content/<str:user_id>/<str:chat_id>',get_user_context,name = 'get_user_context'),
     path('all_chats_user/<str:user_id>', get_all_chats_user, name='get_all_chats_user'),
+
 
 
     path('load_pontuation/', load_pontuation, name='load_pontuation'),    

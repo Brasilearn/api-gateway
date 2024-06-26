@@ -483,3 +483,12 @@ def update_user_skill(request):
         return Response({'message': f'Campo {skill_type} actualizado correctamente.'})
     else:
         return Response({'message': f'El nuevo puntaje no es mayor al actual para el campo {skill_type}.'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_user_info(request, id):
+    try:
+        user = User.objects.get(id=id)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
