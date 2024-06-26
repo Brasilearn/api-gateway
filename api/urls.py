@@ -10,6 +10,7 @@ from .views import get_questions, get_levels, get_weekly_challenge, get_user_sco
 from .views import UserComunityViewSet, UserContextViewSet
 from .views import get_user_context,evaluate_pronunciation
 from .views import return_audio , get_all_chats_user
+from .views import register, CustomAuthToken
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -32,7 +33,10 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('upload-audio/', AudioUploadView.as_view(), name='upload_audio'),
-    path('login/', obtain_auth_token, name="login" ),
+
+    path('register/', register, name='register'),
+    path('login/', CustomAuthToken.as_view(), name='login'),
+
 
     # Nuevas rutas GET
     path('questions/<int:id_level>/<str:q_type>/', get_questions, name='get_questions'),
