@@ -468,11 +468,13 @@ def update_user_skill(request):
     topic_id = request.data.get('topic_id')
     skill_type = request.data.get('skill_type')
     new_score = request.data.get('new_score')
+    level_id = request.data.get('level_id')
+
 
     if skill_type not in ['speaking', 'listening', 'vocabulary', 'reading']:
         return Response({'message': 'Tipo de habilidad no válido.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user_skill = get_object_or_404(UserSkills, user_id=user_id, topic_id=topic_id)
+    user_skill = get_object_or_404(UserSkills, user_id=user_id, topic_id=topic_id, level_id=level_id)
     current_score = getattr(user_skill, skill_type)
 
     if new_score > current_score:
