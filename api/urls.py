@@ -47,16 +47,12 @@ urlpatterns = [
     path('all_chats_user/<str:user_id>', get_all_chats_user, name='get_all_chats_user'),
 
 
-    path('load_pontuation/', load_pontuation, name='load_pontuation'),
-    
+    path('load_pontuation/', load_pontuation, name='load_pontuation'),    
     path("GetUserProfile/",get_user_profile, name="get_user_profile" ),
     path("ReturnID/",return_id,name="return_id" ),
-
-    path('return_topic/<str:topic_slug>/', return_topic, name='return_topic'),
-    
+    path('return_topic/<str:topic_slug>/', return_topic, name='return_topic'),    
 
     path('text-to-speech/',return_audio,name='return_audio'),
-
     path('evaluate_pronunciation/',evaluate_pronunciation,name='evaluate_pronunciation'),
 
 ]

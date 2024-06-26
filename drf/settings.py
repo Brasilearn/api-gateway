@@ -21,6 +21,8 @@ load_dotenv()
 
 API_KEY_OPENAI = os.getenv("API_KEY_OPENAI")
 
+API_KEY_ELEVENLABS= os.environ.get("API_KEY_ELEVENLABS")
+
 API_KEY_GROQ = os.environ.get("API_KEY_GROQ")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
