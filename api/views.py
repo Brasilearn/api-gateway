@@ -18,6 +18,9 @@ from django.http import JsonResponse
 from groq import Groq
 from django.core.files.storage import default_storage
 from difflib import SequenceMatcher
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+
 import os
 
 # Configurar el cliente de OpenAI
@@ -29,13 +32,27 @@ groq_client = Groq(
 )
 
 
-# Create your views here.
-@api_view(["POST"])
-def logout_user(request):
-    if request.method == "POST":
-        request.user.auth_token.delete()
-        return Response({"Message": "You are logget out"}, status = status.HTTP_200) 
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
 
+@api_view(['POST'])
+def register(request):
+    if request.method == 'POST':
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -447,3 +464,4 @@ def return_audio(request):
         return Response({'audio': audio.url}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
