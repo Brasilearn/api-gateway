@@ -34,15 +34,15 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=100, unique=True)
     full_name = models.CharField(max_length=100, null = True)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=256)
+    # password = models.CharField(max_length=256)
     role = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return self.email
