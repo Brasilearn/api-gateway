@@ -10,7 +10,7 @@ from .views import get_questions, get_levels, get_weekly_challenge, get_user_sco
 from .views import UserComunityViewSet, UserContextViewSet
 from .views import get_user_context,evaluate_pronunciation
 from .views import return_audio , get_all_chats_user
-from .views import register, CustomAuthToken
+from .views import register, CustomAuthToken, update_user_skill
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -58,5 +58,7 @@ urlpatterns = [
 
     path('text-to-speech/',return_audio,name='return_audio'),
     path('evaluate_pronunciation/',evaluate_pronunciation,name='evaluate_pronunciation'),
+
+    path('update-skill/', update_user_skill, name='update_user_skill'),
 
 ]

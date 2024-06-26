@@ -20,7 +20,7 @@ from django.core.files.storage import default_storage
 from difflib import SequenceMatcher
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-
+from django.shortcuts import get_object_or_404
 import os
 
 # Configurar el cliente de OpenAI
@@ -128,7 +128,6 @@ class AudioUploadView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-
 @api_view(['GET']) 
 def get_user_profile(request):
     user = request.user
@@ -148,8 +147,6 @@ def get_user_profile(request):
         return Response(user_data, status=status.HTTP_202_ACCEPTED)
     except UserProfile.DoesNotExist:
         return Response({'error': 'User profile not found'}, status=404)
-
-
 
 @api_view(['GET'])
 def return_id(request):
@@ -465,3 +462,22 @@ def return_audio(request):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+def update_user_skill(request):
+    user_id = request.data.get('user_id')
+    topic_id = request.data.get('topic_id')
+    skill_type = request.data.get('skill_type')
+    new_score = request.data.get('new_score')
+
+    if skill_type not in ['speaking', 'listening', 'vocabulary', 'reading']:
+        return Response({'message': 'Tipo de habilidad no válido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user_skill = get_object_or_404(UserSkills, user_id=user_id, topic_id=topic_id)
+    current_score = getattr(user_skill, skill_type)
+
+    if new_score > current_score:
+        setattr(user_skill, skill_type, new_score)
+        user_skill.save()
+        return Response({'message': f'Campo {skill_type} actualizado correctamente.'})
+    else:
+        return Response({'message': f'El nuevo puntaje no es mayor al actual para el campo {skill_type}.'}, status=status.HTTP_400_BAD_REQUEST)
