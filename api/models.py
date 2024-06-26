@@ -57,15 +57,7 @@ class User(AbstractBaseUser):
 
     is_admin = models.BooleanField(default=False)
 
-# UserSkills Model
-class UserSkills(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    topic = models.CharField(max_length=100)
-    level = models.CharField(max_length=100)
-    speaking = models.IntegerField(default=0, blank=True, null=True)
-    listening = models.IntegerField(default=0, blank=True, null=True)
-    vocabulary = models.IntegerField(default=0, blank=True, null=True)
-    reading = models.IntegerField(default=0, blank=True, null=True)
+
 
 # Topic Model
 class Topic(models.Model):
@@ -88,6 +80,16 @@ class Level(models.Model):
 
     def __str__(self):
         return self.title
+
+# UserSkills Model
+class UserSkills(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    level = models.ForeignKey(Level, on_delete=models.CASCADE)
+    speaking = models.IntegerField(default=0, blank=True, null=True)
+    listening = models.IntegerField(default=0, blank=True, null=True)
+    vocabulary = models.IntegerField(default=0, blank=True, null=True)
+    reading = models.IntegerField(default=0, blank=True, null=True)    
 
 # Question Model
 class Question(models.Model):

@@ -312,7 +312,7 @@ def get_title(contexto, provider = 'groq', model = 'llama3-8b-8192'):
 
     # Agregamos las indicaciones de generar un titulo con este contexto
     prompt = f'''Genera un titulo para la siguiente conversacion que sea corta, máximo 7 palabras:  
-    <requisitos>el titulo debe estar limpio , con solo caracteres alfanumericos </requisitos>
+    <requisitos>el titulo debe estar limpio , con solo caracteres alfanumericos y en español</requisitos>
     <contexto>{contexto}</contexto>
     '''
 
